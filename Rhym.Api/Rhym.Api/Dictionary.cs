@@ -2,7 +2,7 @@
 
 public class Dictionary
 {
-	public static string Words = @"## Date:  August 8, 1998
+	public static string DictionaryList = @"## Date:  August 8, 1998
 ##
 ## The Carnegie Mellon Pronouncing Dictionary [cmudict.0.6] is Copyright 1998
 ## by Carnegie Mellon University. Use of this dictionary, for any research or

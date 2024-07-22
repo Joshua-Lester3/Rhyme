@@ -29,10 +29,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSignalR();
 builder.Services.AddSwaggerGen(config =>
 {
-	config.AddSignalRSwaggerGen();
 	config.SwaggerDoc("v1", new OpenApiInfo { Title = "Rhym API", Version = "v1" });
 	config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
 	{
@@ -66,7 +64,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<DocumentService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<WordService>();
-builder.Services.AddScoped<RhymHub>();
 
 // Identity Services
 builder.Services.AddIdentityCore<AppUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -118,10 +115,6 @@ app.UseCors(AllOrigins);
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseRouting();
-
-app.MapHub<RhymHub>("hub");
 
 app.Run();
 

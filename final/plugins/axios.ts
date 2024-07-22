@@ -3,8 +3,7 @@ import Axios from 'axios';
 export default defineNuxtPlugin(() => {
   if (process.client) {
     if (
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '172.31.112.1'
+      window.location.hostname === 'localhost'
     ) {
       Axios.defaults.baseURL = 'https://localhost:7166/';
     } else {

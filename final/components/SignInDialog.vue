@@ -5,7 +5,7 @@
     :persistent="!isLoggedIn"
     @update:model-value="closeDialog">
     <v-card v-if="!isLoggedIn">
-      <v-tabs v-model="tab" color="secondary" class="ma-0">
+      <v-tabs v-model="tab" color="secondary">
         <v-tab :value="0">Sign In</v-tab>
         <v-tab :value="1">Register</v-tab>
       </v-tabs>

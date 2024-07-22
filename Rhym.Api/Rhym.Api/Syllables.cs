@@ -2,7 +2,7 @@
 
 public class Syllables
 {
-	public static string Sylls = @"a;a
+	public static string SyllablesText = @"a;a
 a;back
 a;ban;don
 a;ban;don;ment

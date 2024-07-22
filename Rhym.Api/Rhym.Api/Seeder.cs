@@ -5,6 +5,7 @@ using Rhym.Api.Models;
 using System;
 using System.Data.Common;
 using System.IO;
+using System.Reflection.PortableExecutable;
 
 namespace Rhym.Api;
 
@@ -17,80 +18,76 @@ public class Seeder
 			string? line;
 			try
 			{
-				//string? projectDirectory = Environment.CurrentDirectory;
-				//if (projectDirectory == null)
-				//{
-				//	throw new InvalidOperationException("Could not find directory");
-				//}
-				//projectDirectory = Path.Combine(projectDirectory, "Dictionary.txt");
-				StreamReader reader = new StreamReader(Dictionary.Words);
-				line = reader.ReadLine();
-
-				while (line != null)
+				using (var stream = GenerateStreamFromString(Dictionary.DictionaryList))
 				{
-					if (!line.StartsWith("#"))
-					{
-						string[] array = line.Split("  ");
-						if (array.Length != 2)
-						{
-							throw new InvalidOperationException("Text file is not properly formatted");
-						}
-
-						var syllables = array[1].Split(" - ");
-						var pronunciation = String.Join(' ', syllables).Split(' ');
-						var wordKey = array[0].Trim().ToLower();
-
-						Word word = new Word
-						{
-							WordKey = wordKey,
-							Phonemes = pronunciation,
-							SyllablesPronunciation = syllables,
-						};
-						await db.Words.AddAsync(word);
-					}
+					StreamReader reader = new(stream);
 					line = reader.ReadLine();
+
+					while (line != null)
+					{
+						if (!line.StartsWith("#"))
+						{
+							string[] array = line.Split("  ");
+							if (array.Length != 2)
+							{
+								throw new InvalidOperationException("Text file is not properly formatted");
+							}
+
+							var syllables = array[1].Split(" - ");
+							var pronunciation = String.Join(' ', syllables).Split(' ');
+							var wordKey = array[0].Trim().ToLower();
+
+							Word word = new Word
+							{
+								WordKey = wordKey,
+								Phonemes = pronunciation,
+								SyllablesPronunciation = syllables,
+							};
+							await db.Words.AddAsync(word);
+						}
+						line = reader.ReadLine();
+					}
+					reader.Close();
+					await db.SaveChangesAsync();
 				}
-				reader.Close();
-				await db.SaveChangesAsync();
+				
 			}
 			catch (FileNotFoundException e)
 			{
 				Console.WriteLine("FileNotFoundException: " + e.Message);
 			}
 		}
+
 		if (!db.Syllables.Any())
 		{
 			string? line;
 			try
 			{
-				//string? projectDirectory = Environment.CurrentDirectory;
-				//if (projectDirectory == null)
-				//{
-				//	throw new InvalidOperationException("Could not find directory");
-				//}
-				//projectDirectory = Path.Combine(projectDirectory, "Syllables.txt");
-				StreamReader reader = new StreamReader(Syllables.Sylls);
-				line = reader.ReadLine();
-				while (!line.IsNullOrEmpty())
+				using (var stream = GenerateStreamFromString(Syllables.SyllablesText))
 				{
-					string[] syllables = line!.Split(';');
-
-					string word = String.Join("", syllables).ToUpper();
-					Word? foundWord = await db.Words.FirstOrDefaultAsync(dbWord => dbWord.WordKey.Equals(word));
-					if (foundWord != null)
-					{
-						Syllable syllable = new Syllable
-						{
-							WordKey = word,
-							PlainTextSyllables = syllables,
-							WordId = foundWord.WordId,
-						};
-						await db.Syllables.AddAsync(syllable);
-					}
+					StreamReader reader = new StreamReader(stream);
 					line = reader.ReadLine();
+					while (!line.IsNullOrEmpty())
+					{
+						string[] syllables = line!.Split(';');
+
+						string word = String.Join("", syllables).ToUpper();
+						Word? foundWord = await db.Words.FirstOrDefaultAsync(dbWord => dbWord.WordKey.Equals(word));
+						if (foundWord != null)
+						{
+							Syllable syllable = new Syllable
+							{
+								WordKey = word,
+								PlainTextSyllables = syllables,
+								WordId = foundWord.WordId,
+							};
+							await db.Syllables.AddAsync(syllable);
+						}
+						line = reader.ReadLine();
+					}
+					await db.SaveChangesAsync();
+					reader.Close();
 				}
-				await db.SaveChangesAsync();
-				reader.Close();
 			}
 			catch (FileNotFoundException e)
 			{
@@ -117,5 +114,15 @@ public class Seeder
 			}
 			await db.SaveChangesAsync();
 		}
+	}
+
+	public static Stream GenerateStreamFromString(string str)
+	{
+		var stream = new MemoryStream();
+		var writer = new StreamWriter(stream);
+		writer.Write(str);
+		writer.Flush();
+		stream.Position = 0;
+		return stream;
 	}
 }
