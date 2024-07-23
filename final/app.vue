@@ -14,18 +14,16 @@
           >Rhyme
         </v-app-bar-title></template
       >
-      <v-btn @click="signInDialog = true">{{
-        tokenService.isLoggedIn() ? tokenService.getUserName() : 'Log In'
-      }}</v-btn>
-      <v-app-bar-nav-icon
-        icon="mdi-cog"
-        class="mr-2"
-        @click="settingsDialog = !settingsDialog" />
+      <v-btn v-if="profileText.length !== 0" @click="signInDialog = true" prepend-icon="mdi-account">{{ profileText }}</v-btn>
+      <v-btn v-else icon="mdi-account" @click="signInDialog = true" />
+        <v-btn
+          @click="toggleTheme"
+          icon="mdi-theme-light-dark" />
 
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
     </v-app-bar>
-    <v-navigation-drawer location="right" width="175" v-model="drawer">
-      <v-list>
+    <v-navigation-drawer location="right" :width="navigationDrawerWidth" v-model="drawer">
+      <v-list class="text-center">
         <v-list-item @click="$router.push('/about')">
           <v-icon>mdi-information-slab-box-outline</v-icon> About
         </v-list-item>
@@ -41,7 +39,6 @@
     <v-main>
       <NuxtPage />
     </v-main>
-    <SettingsDialog v-model="settingsDialog" />
     <SignInDialog v-model="signInDialog" />
   </v-app>
 </template>
@@ -50,16 +47,50 @@
 import nuxtStorage from 'nuxt-storage';
 import { useTheme } from 'vuetify';
 import TokenService from './scripts/tokenService';
+import { useDisplay } from 'vuetify';
 
 const tokenService = ref(new TokenService());
 const theme = useTheme();
 const drawer = ref(false);
 const settingsDialog = ref(false);
 const signInDialog = ref<boolean>(!tokenService.value.isLoggedIn());
+const display = ref(useDisplay());
 provide('TOKEN', tokenService);
 
 onMounted(() => {
   var defaultTheme = nuxtStorage.localStorage.getData('theme');
   theme.global.name.value = defaultTheme ?? 'dark';
 });
+
+const profileText = computed<string>(() => {
+  if (display.value.smAndUp) {
+    if (tokenService?.value.isLoggedIn()) {
+      return tokenService?.value.getUserName();
+    } else {
+      return 'Login';
+    }
+  } else {
+    return '';
+  }
+});
+
+const navigationDrawerWidth = computed(() => {
+  switch (display.value.name) {
+    case 'xs': return 175;
+    case 'sm': return 200;
+    case 'md': return 225;
+    case 'lg': return 250;
+    case 'xl': return 275;
+    case 'xxl': return 300;
+  }
+});
+
+function toggleTheme() {
+  if (theme.global.name.value === 'dark') {
+    theme.global.name.value = 'light';
+  } else {
+    theme.global.name.value = 'dark';
+  }
+  nuxtStorage.localStorage.setData('theme', theme.global.name.value);
+}
 </script>

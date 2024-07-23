@@ -22,9 +22,9 @@ const light = {
 const dark = {
   dark: true,
   colors: {
-    primary: colors.grey.darken4,
-    primaryLighten: colors.grey.darken3,
-    secondary: colors.yellow.darken1,
+    primary: colors.grey.darken3,
+    secondary: colors.yellow.darken2,
+    surface: colors.grey.darken4,
     accent: '#ffc107',
     error: '#ff5722',
     warning: '#e91e63',

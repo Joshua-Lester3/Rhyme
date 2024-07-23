@@ -140,13 +140,6 @@ public class WordController : ControllerBase
 		return await _service.GetPronunciationToPlain(word);
 	}
 
-	[HttpGet("Seed")]
-	[Authorize(Policy = Policies.Admin)]
-	public async Task Seed()
-	{
-		await _service.Seed();
-	}
-
 	[HttpPost("AddWord")]
 	public async Task<IActionResult> PostWord(WordDto dto)
 	{

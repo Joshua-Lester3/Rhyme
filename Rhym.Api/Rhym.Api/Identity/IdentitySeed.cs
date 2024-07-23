@@ -31,7 +31,7 @@ public class IdentitySeed
 		{
 			AppUser user = new AppUser
 			{
-				UserName = "admin@ewu.edu",
+				UserName = "Thors",
 				Email = "admin@ewu.edu"
 			};
 

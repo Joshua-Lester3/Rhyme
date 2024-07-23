@@ -16,7 +16,7 @@
           class="my-4"
           align="center"
           cols="12"
-          sm="12"
+          sm="6"
           md="6"
           lg="4"
           v-for="document in documents"
@@ -26,6 +26,7 @@
             elevation="2"
             :height="300"
             class="align-center d-flex justify-center"
+            color=""
             ><p class="mb-5">
               {{ document.title }}
             </p></v-card
@@ -73,7 +74,6 @@ const getHeight = computed(() => {
 onMounted(async () => {
   const guid = tokenService?.value.getGuid();
   if (guid !== '') {
-    console.log(guid);
     try {
       const url = `document/getDocumentList?userId=${guid}`;
       const response = await Axios.get(url);
@@ -83,13 +83,4 @@ onMounted(async () => {
     }
   }
 });
-
-async function seed() {
-  try {
-    const url = `word/seed`;
-    const response = await Axios.get(url);
-  } catch (error) {
-    console.error('Error seeding:', error);
-  }
-}
 </script>
