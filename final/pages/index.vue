@@ -1,24 +1,6 @@
 <template>
   <v-alert v-if="error" type="error"> Could not find other note's URL </v-alert>
   <v-app>
-    <v-toolbar height="50" color="background">
-      <v-row>
-        <v-col cols="7"> </v-col>
-        <v-col cols="5">
-          <v-text-field
-            label="Other note's URL"
-            density="compact"
-            variant="solo"
-            class="mt-5 mr-1"
-            bg-color="secondary"
-            type="error"
-            flat
-            v-model="otherDocumentUrl"
-            append-inner-icon="mdi-vector-line"
-            @click:append-inner="openOtherDocument" />
-        </v-col>
-      </v-row>
-    </v-toolbar>
     <v-container class="align-center d-flex justify-center">
       <v-card
         height="200"
@@ -69,7 +51,6 @@ const display = useDisplay();
 const router = useRouter();
 const documents = ref<Document[]>();
 const tokenService: Ref<TokenService> | undefined = inject('TOKEN');
-const otherDocumentUrl = ref('');
 const error = ref(false);
 
 interface Document {
@@ -102,17 +83,6 @@ onMounted(async () => {
     }
   }
 });
-
-function openOtherDocument() {
-  const array = otherDocumentUrl.value.split('=');
-  const documentId = parseInt(array[array.length - 1]);
-  if (Number.isNaN(documentId)) {
-    error.value = true;
-  } else {
-    error.value = false;
-    router.push(`/documentView?id=${documentId}`);
-  }
-}
 
 async function seed() {
   try {
