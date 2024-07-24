@@ -22,7 +22,7 @@ const light = {
 const dark = {
   dark: true,
   colors: {
-    primary: colors.grey.darken3,
+    primary: colors.grey.darken4,
     secondary: colors.yellow.darken2,
     surface: colors.grey.darken4,
     accent: '#ffc107',

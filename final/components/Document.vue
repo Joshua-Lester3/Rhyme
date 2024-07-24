@@ -7,62 +7,68 @@
     @show-rhyme-scheme-window="showRhymeSchemeWindow = !showRhymeSchemeWindow"
     @showLinkDialog="showLinkDialog = true" />
   <v-progress-linear v-if="isBusy" color="secondary" indeterminate />
-  <v-row>
-    <v-window
-      v-model="window"
-      class="mx-auto my-15 pa-0"
-      :show-arrows="showRhymeSchemeWindow ? 'hover' : false"
-      @update:model-value="if (window === 1) getRhymeScheme();">
-      <v-window-item>
-        <v-card
-          elevation="5"
-          tile
-          min-height="450"
-          height="auto"
-          min-width="500"
-          width="auto"
-          color="primary">
-          <v-container class="mx-0">
-            <v-textarea
-              v-model="content"
-              placeholder="Type something :)"
-              variant="solo"
+  <v-container>
+    <v-row>
+      <v-col xs="12" sm="8" lg="6" offset-xs="0" offset-sm="2" offset-lg="3">
+        <v-window
+          v-model="window"
+          class="mx-auto my-15"
+          :show-arrows="showRhymeSchemeWindow ? 'hover' : false"
+          @update:model-value="if (window === 1) getRhymeScheme();">
+          <v-window-item>
+            <v-container>
+                  <v-card
+                    elevation="5"
+                    tile
+                    min-height="300"
+                    height="auto"
+                    min-width="300"
+                    width="auto"
+                    color="primary">
+                    <v-container class="mx-0">
+                      <v-textarea
+                        v-model="content"
+                        placeholder="Type something :)"
+                        variant="solo"
+                        tile
+                        flat
+                        density="comfortable"
+                        elevation="0"
+                        no-resize
+                        auto-grow />
+                    </v-container>
+                  </v-card>
+            </v-container>
+          </v-window-item>
+          <v-window-item>
+            <v-card
+              elevation="5"
               tile
-              flat
-              density="comfortable"
-              elevation="0"
-              no-resize
-              auto-grow />
-          </v-container>
-        </v-card>
-      </v-window-item>
-      <v-window-item>
-        <v-card
-          elevation="5"
-          tile
-          min-height="450"
-          height="auto"
-          max-width="450"
-          width="auto"
-          color="primary">
-          <v-container class="mx-0">
-            <template
-              v-for="(word, outerIndex) in rhymeSchemeColorContent"
-              :key="outerIndex">
-              <template
-                v-for="(syllable, innerIndex) in word.syllables"
-                :key="innerIndex"
-                ><span :class="`bg-${syllable.color}`">{{
-                  syllable.syllable
-                }}</span></template
-              >
-              <span>&ensp;</span>
-            </template>
-          </v-container>
-        </v-card>
-      </v-window-item>
-    </v-window>
-  </v-row>
+              min-height="450"
+              height="auto"
+              max-width="450"
+              width="auto"
+              color="primary">
+              <v-container class="mx-0">
+                <template
+                  v-for="(word, outerIndex) in rhymeSchemeColorContent"
+                  :key="outerIndex">
+                  <template
+                    v-for="(syllable, innerIndex) in word.syllables"
+                    :key="innerIndex"
+                    ><span :class="`bg-${syllable.color}`">{{
+                      syllable.syllable
+                    }}</span></template
+                  >
+                  <span>&ensp;</span>
+                </template>
+              </v-container>
+            </v-card>
+          </v-window-item>
+        </v-window>
+      </v-col>
+    </v-row>
+  </v-container>
   <RhymDialog
     v-model:showModel="rhymDialog"
     v-model:content="content"

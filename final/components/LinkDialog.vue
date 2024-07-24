@@ -41,7 +41,7 @@ const props = defineProps({
   shared: { type: Boolean, required: true },
 });
 const emits = defineEmits(['toggleShared']);
-const url = `website.net/documentView?id=${props.documentId}`;
+const url = `rhymebook.xyz/documentView?id=${props.documentId}`;
 const copied = ref(false);
 const switchModelValue = ref(props.shared);
 

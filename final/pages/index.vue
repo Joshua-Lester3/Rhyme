@@ -2,35 +2,35 @@
   <v-alert v-if="error" type="error"> Could not find other note's URL </v-alert>
   <v-app>
     <v-container class="align-center d-flex justify-center">
-      <v-card
-        height="200"
-        width="150"
-        class="align-center d-flex justify-center mt-2 mb-6"
+      <v-card height="200" width="150" class="align-center d-flex justify-center mt-2 mb-6"
         @click="$router.push('/documentView?id=-1')">
         <v-icon class="mb-5">mdi-plus</v-icon>
       </v-card>
     </v-container>
     <v-container>
       <v-row>
-        <v-col
-          class="my-4"
-          align="center"
-          cols="12"
-          sm="6"
-          md="6"
-          lg="4"
-          v-for="document in documents"
+        <v-col class="my-4" cols="12" sm="6" md="6" lg="4" v-for="document in documents"
           :key="document.documentId">
-          <v-card
-            @click="$router.push(`/documentView?id=${document.documentId}`)"
-            elevation="2"
-            :height="300"
-            class="align-center d-flex justify-center"
-            color=""
-            ><p class="mb-5">
+          <v-card @click="$router.push(`/documentView?id=${document.documentId}`)" elevation="2" height="300">
+            <!-- <v-img height="200px" src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" cover></v-img> -->
+            <p>Who the fuck is this? Paging me at 5:46
+In the morning, crack of dawn and
+Now I'm yawning, wipe the cold out my eye
+See who's this paging me and why?
+It's my nigga, Pop, from the barbershop
+Told me he was in the gambling spot and heard the intricate plot
+Of niggas wanna stick me like flypaper, neighbor
+Slow down love, please chill, drop the caper</p>
+            <v-card-title >
               {{ document.title }}
-            </p></v-card
-          >
+            </v-card-title>
+            <v-card-subtitle>
+              Opened [...]
+            </v-card-subtitle>
+            <v-card-actions>
+              <v-icon color="error">mdi-delete-outline</v-icon>
+            </v-card-actions>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
