@@ -9,27 +9,16 @@
     </v-container>
     <v-container>
       <v-row>
-        <v-col class="my-4" cols="12" sm="6" md="6" lg="4" v-for="document in documents"
-          :key="document.documentId">
-          <v-card @click="$router.push(`/documentView?id=${document.documentId}`)" elevation="2" height="300">
-            <!-- <v-img height="200px" src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" cover></v-img> -->
-            <p>Who the fuck is this? Paging me at 5:46
-In the morning, crack of dawn and
-Now I'm yawning, wipe the cold out my eye
-See who's this paging me and why?
-It's my nigga, Pop, from the barbershop
-Told me he was in the gambling spot and heard the intricate plot
-Of niggas wanna stick me like flypaper, neighbor
-Slow down love, please chill, drop the caper</p>
-            <v-card-title >
-              {{ document.title }}
-            </v-card-title>
-            <v-card-subtitle>
-              Opened [...]
-            </v-card-subtitle>
-            <v-card-actions>
-              <v-icon color="error">mdi-delete-outline</v-icon>
-            </v-card-actions>
+        <v-col class="my-4" cols="12" sm="6" md="6" lg="4" v-for="document in documents" :key="document.documentId">
+          <v-card @click="$router.push(`/documentView?id=${document.documentId}`)" elevation="2" height="300"
+          :title="document.title" :subtitle="`Opened ${getDateString(document)}`">
+            <template v-slot:append>
+              <v-icon class="mx-4" color="error" @click.stop.prevent="deleteDocument(document.documentId)">mdi-delete-outline</v-icon>
+            </template>
+            <v-sheet tile class="ma-5 text-subtitle-1 text-medium-emphasis">
+              
+              <p>{{ document.content.substring(0, 200) + '...' }}</p>
+            </v-sheet>
           </v-card>
         </v-col>
       </v-row>
@@ -47,6 +36,15 @@ Slow down love, please chill, drop the caper</p>
 import { useDisplay } from 'vuetify';
 import Axios from 'axios';
 import TokenService from '~/scripts/tokenService';
+import { _getAppConfig } from '#app';
+import { useEventBus } from '@vueuse/core';
+import { signInOrOutKey } from '~/scripts/signInOrOutKey';
+
+const bus = useEventBus(signInOrOutKey);
+
+bus.on(async (e) => {
+  await getDocumentList();
+})
 
 const display = useDisplay();
 const router = useRouter();
@@ -57,6 +55,8 @@ const error = ref(false);
 interface Document {
   documentId: number;
   title: string;
+  content: string;
+  lastOpened: string;
 }
 
 const getHeight = computed(() => {
@@ -71,7 +71,25 @@ const getHeight = computed(() => {
   }
 });
 
+async function deleteDocument(documentId: number) {
+  try {
+    const url = `document/deleteDocument?documentId=${documentId}`;
+    const response = await Axios.post(url, {});
+    await getDocumentList();
+  } catch (error) {
+    console.error('Error deleting document information', error);
+  }
+}
+
+function getDateString(document: Document) {
+  return new Date(Date.parse(document.lastOpened)).toLocaleDateString();
+}
+
 onMounted(async () => {
+  await getDocumentList();
+});
+
+async function getDocumentList() {
   const guid = tokenService?.value.getGuid();
   if (guid !== '') {
     try {
@@ -81,6 +99,8 @@ onMounted(async () => {
     } catch (error) {
       console.error('Error fetching selected word:', error);
     }
+  } else {
+    documents.value = [];
   }
-});
+}
 </script>

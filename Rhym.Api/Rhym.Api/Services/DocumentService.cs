@@ -29,7 +29,6 @@ public class DocumentService
 		{
 			foundDocument = await _context.Documents.
 				Where(dbDocument => dbDocument.DocumentId == request.DocumentId).
-				Include(document => document.DocumentData).
 				FirstOrDefaultAsync();
 		}
 		if (foundDocument is null)
@@ -39,37 +38,27 @@ public class DocumentService
 				if (request.DocumentId != -1)
 				{
 					foundDocument = _context.Documents.
-						Include(dbDocument => dbDocument.DocumentData).
 						FirstOrDefault(dbDocument => dbDocument.DocumentId == request.DocumentId);
 				}
 
 				if (foundDocument is null)
 				{
-					DocumentData data = new DocumentData
-					{
-						Content = request.Content,
-					};
-					_context.DocumentData.Add(data);
-					_context.SaveChanges();
 					Document addedDocument = new Document
 					{
 						UserId = request.UserId,
-						DocumentData = data,
+						Content = request.Content,
 						Title = request.Title,
 						Shared = request.IsShared,
+						LastOpened = request.LastOpened
 					};
 					_context.Documents.Add(addedDocument);
 					_context.SaveChanges();
+					//addedDocument.LastOpened.
 					return addedDocument;
 				}
 				else
 				{
-					var foundDocumentData = _context.DocumentData.FirstOrDefault(documentData => documentData == foundDocument.DocumentData);
-					if (foundDocumentData is null)
-					{
-						throw new InvalidOperationException("Invalid state: No DocumentData for the corresponding Document entity.");
-					}
-					foundDocumentData.Content = request.Content;
+					foundDocument.Content = request.Content;
 					foundDocument.Title = request.Title;
 					foundDocument.Shared = request.IsShared;
 					_context.SaveChanges();
@@ -81,12 +70,7 @@ public class DocumentService
 		{
 			lock (_changingDocumentLock)
 			{
-				var foundDocumentData = _context.DocumentData.FirstOrDefault(documentData => documentData == foundDocument.DocumentData);
-				if (foundDocumentData is null)
-				{
-					throw new InvalidOperationException("Invalid state: No DocumentData for the corresponding Document entity.");
-				}
-				foundDocumentData.Content = request.Content;
+				foundDocument.Content = request.Content;
 				foundDocument.Title = request.Title;
 				foundDocument.Shared = request.IsShared;
 				_context.SaveChanges();
@@ -95,21 +79,24 @@ public class DocumentService
 		}
 	}
 
-	public async Task<DocumentDto?> GetDocumentDataAsync(int documentId)
+	public async Task<DocumentDto?> GetDocumentDataAsync(DocumentDto dto)
 	{
-		var result = await _context.Documents
-			.Where(document => document.DocumentId == documentId)
-			.Include(document => document.DocumentData)
-			.Select(document => new DocumentDto
+		var document = await _context.Documents
+			.Where(document => document.DocumentId == dto.DocumentId)
+			.FirstOrDefaultAsync();
+		if (document != null)
+		{
+			document.LastOpened = dto.LastOpened;
+			return new DocumentDto
 			{
 				UserId = document.UserId,
 				DocumentId = document.DocumentId,
 				Title = document.Title,
-				Content = document.DocumentData!.Content,
+				Content = document.Content,
 				IsShared = document.Shared,
-			})
-			.FirstOrDefaultAsync();
-		return result;
+			};
+		}
+		return null;
 	}
 
 	public async Task<bool> DeleteDocumentAsync(int documentId)
@@ -119,15 +106,10 @@ public class DocumentService
 		{
 			lock (_deletingDocumentLock)
 			{
-				foundDocument = _context.Documents.Include(document => document.DocumentData).FirstOrDefault(document => document.DocumentId == documentId);
+				foundDocument = _context.Documents.FirstOrDefault(document => document.DocumentId == documentId);
 				if (foundDocument is not null)
 				{
 					_context.Documents.Remove(foundDocument);
-					var documentData = foundDocument.DocumentData;
-					if (documentData is not null)
-					{
-						_context.DocumentData.Remove(documentData);
-					}
 					_context.SaveChanges();
 					return true;
 				}

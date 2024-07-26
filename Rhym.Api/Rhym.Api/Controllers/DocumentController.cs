@@ -34,10 +34,10 @@ public class DocumentController : ControllerBase
 		return await _service.ToggleSharedAsync(documentId, isShared);
 	}
 
-	[HttpGet("GetDocumentData")]
-	public async Task<DocumentDto?> GetDocumentAsync(int documentId)
+	[HttpPost("GetDocumentData")]
+	public async Task<DocumentDto?> GetDocumentAsync(DocumentDto dto)
 	{
-		return await _service.GetDocumentDataAsync(documentId);
+		return await _service.GetDocumentDataAsync(dto);
 	}
 
 	[HttpPost("DeleteDocument")]

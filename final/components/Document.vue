@@ -119,12 +119,16 @@ try {
       Title: 'Untitled',
       Content: '',
       IsShared: false,
+      LastOpened: new Date().toJSON(),
     });
     title.value = response.data.title;
     documentId = response.data.documentId;
   } else {
-    const url = `document/getDocumentData?documentId=${documentId}`;
-    const response = await Axios.get(url);
+    const url = 'document/getDocumentData';
+    const response = await Axios.post(url, {
+      DocumentId: documentId,
+      LastOpened: new Date().toJSON(),
+    });
     if (
       !response.data.isShared &&
       tokenService?.value.getGuid().localeCompare(response.data.userId) != 0

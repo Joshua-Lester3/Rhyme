@@ -52,8 +52,13 @@
 <script setup lang="ts">
 import Axios from 'axios';
 import TokenService from '~/scripts/tokenService';
+import { useEventBus } from '@vueuse/core';
+import { signInOrOutKey } from '~/scripts/signInOrOutKey';
+
+const bus = useEventBus(signInOrOutKey);
 
 const modelValue = defineModel<boolean>({ default: false });
+const emits = defineEmits(['signInOrOut']);
 const tokenService: Ref<TokenService> | undefined = inject('TOKEN');
 const tab = ref(0);
 const email = ref('');
@@ -105,7 +110,8 @@ function signIn() {
       tokenService?.value.setGuid(undefined);
       errorMessage.value = '';
       modelValue.value = false;
-      console.log(response.data);
+      emits('signInOrOut');
+      bus.emit({ loggedIn: true });
       setTimeout(() => {
         isLoggedIn.value = true;
       }, 1000);
@@ -119,9 +125,11 @@ function signIn() {
 }
 
 function signOut() {
-  tokenService?.value.setToken(undefined);
+  tokenService?.value.setToken('');
   tokenService?.value.setGuid(null);
   isLoggedIn.value = false;
+  emits('signInOrOut');
+  bus.emit({ loggedIn: false });
 }
 
 function closeDialog() {

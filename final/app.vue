@@ -39,7 +39,7 @@
     <v-main>
       <NuxtPage />
     </v-main>
-    <SignInDialog v-model="signInDialog" />
+    <SignInDialog v-model="signInDialog" @sign-in-or-out="() => updateProfileText()"/>
   </v-app>
 </template>
 
@@ -52,26 +52,46 @@ import { useDisplay } from 'vuetify';
 const tokenService = ref(new TokenService());
 const theme = useTheme();
 const drawer = ref(false);
-const settingsDialog = ref(false);
 const signInDialog = ref<boolean>(!tokenService.value.isLoggedIn());
 const display = ref(useDisplay());
+const profileText = ref('');
 provide('TOKEN', tokenService);
 
 onMounted(() => {
+  updateProfileText();
   var defaultTheme = nuxtStorage.localStorage.getData('theme');
   theme.global.name.value = defaultTheme ?? 'dark';
 });
 
-const profileText = computed<string>(() => {
+// const profileText = computed<string>(() => {
+//   signInDialog.value;
+//   console.log(tokenService?.value.isLoggedIn());
+//   if (display.value.smAndUp) {
+//     if (tokenService?.value.isLoggedIn()) {
+//       return tokenService?.value.getUserName();
+//     } else {
+//       return 'Login';
+//     }
+//   } else {
+//     return '';
+//   }
+// });
+
+function updateProfileText() {
+  const isLogged = tokenService?.value.isLoggedIn();
   if (display.value.smAndUp) {
     if (tokenService?.value.isLoggedIn()) {
-      return tokenService?.value.getUserName();
+      profileText.value = tokenService?.value.getUserName();
     } else {
-      return 'Login';
+      profileText.value = 'Login';
     }
   } else {
-    return '';
+    profileText.value = '';
   }
+}
+
+watch([() => display.value.smAndUp], () => {
+  updateProfileText();
 });
 
 const navigationDrawerWidth = computed(() => {

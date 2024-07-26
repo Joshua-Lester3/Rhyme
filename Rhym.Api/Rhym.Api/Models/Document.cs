@@ -11,10 +11,6 @@ public class Document
 	[Required]
 	public string UserId { get; set; } = null!;
 	public AppUser? User { get; set; }
-
-	[Required]
-	public int DocumentDataId { get; set; }
-    public DocumentData? DocumentData { get; set; }
-
-
+	public string Content { get; set; } = null!;
+	public DateTime LastOpened { get; set; }
 }
