@@ -56,5 +56,17 @@ namespace Rhym.Api.Controllers
 					return BadRequest("Account already exists.");
 			}
 		}
+
+		[HttpGet("ProfileInfo")]
+		public async Task<IActionResult> GetProfileInfo(string userId)
+		{
+			var dto = await _service.GetProfileInfo(userId);
+
+			if (dto is null)
+			{
+				return NotFound();
+			}
+			return Ok(dto);
+		}
 	}
 }

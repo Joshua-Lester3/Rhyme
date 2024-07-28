@@ -1,9 +1,5 @@
 <template>
-  <v-dialog
-    v-model="modelValue"
-    width="500"
-    :persistent="!isLoggedIn"
-    @update:model-value="closeDialog">
+  <v-dialog v-model="modelValue" width="500" :persistent="!isLoggedIn" @update:model-value="closeDialog">
     <v-card v-if="!isLoggedIn">
       <v-tabs v-model="tab" color="secondary">
         <v-tab :value="0">Sign In</v-tab>
@@ -27,12 +23,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn variant="tonal" color="secondary" @click="closeDialog"
-          >Cancel</v-btn
-        >
-        <v-btn class="ma-3" variant="flat" color="secondary" @click="submitInfo"
-          >Enter</v-btn
-        >
+        <v-btn variant="tonal" color="secondary" @click="closeDialog">Cancel</v-btn>
+        <v-btn class="ma-3" variant="flat" color="secondary" @click="submitInfo">Enter</v-btn>
       </v-card-actions>
     </v-card>
     <v-card v-else>
@@ -41,6 +33,14 @@
           {{ tokenService?.getUserName() }}
         </v-card-title>
       </v-sheet>
+      <v-card-text>
+        <p>
+          {{ `Email: ${profileInfo?.email}` }}
+        </p>
+        <p>
+          {{ `Number of documents: ${profileInfo?.numberOfDocuments}` }}
+        </p>
+      </v-card-text>
       <v-card-actions>
         <v-spacer />
         <v-btn @click="signOut">Sign out</v-btn>
@@ -71,6 +71,34 @@ const successMessage =
   "You've successfully registered! Now log in to access Rhyme's features.";
 const errorTab = ref(0);
 const warningMessage = ref(false);
+
+const profileInfo = ref<ProfileInfo | undefined>();
+
+interface ProfileInfo {
+  numberOfDocuments: number;
+  email: string;
+}
+
+onMounted(async () => {
+  await getProfileInfo();
+});
+
+watch(modelValue, async () => {
+  await getProfileInfo();
+})
+
+async function getProfileInfo() {
+  if (tokenService?.value.isLoggedIn()) {
+    const url = `user/profileInfo?userId=${tokenService?.value.getGuid()}`;
+    Axios.get(url)
+      .then(response => {
+        profileInfo.value = response.data;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+}
 
 function submitInfo() {
   if (tab.value === 0) {
@@ -105,13 +133,14 @@ function signIn() {
     username: username.value,
     password: password.value,
   })
-    .then(response => {
+    .then(async (response) => {
       tokenService?.value.setToken(response.data.token);
       tokenService?.value.setGuid(undefined);
       errorMessage.value = '';
       modelValue.value = false;
       emits('signInOrOut');
       bus.emit({ loggedIn: true });
+      await getProfileInfo();
       setTimeout(() => {
         isLoggedIn.value = true;
       }, 1000);

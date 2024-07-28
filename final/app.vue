@@ -78,7 +78,6 @@ onMounted(() => {
 // });
 
 function updateProfileText() {
-  const isLogged = tokenService?.value.isLoggedIn();
   if (display.value.smAndUp) {
     if (tokenService?.value.isLoggedIn()) {
       profileText.value = tokenService?.value.getUserName();

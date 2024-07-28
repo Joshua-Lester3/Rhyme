@@ -40,6 +40,21 @@ public class UserService
 		}
 		return new RegistrationDto { Results = RegistrationResults.AccountExists };
 	}
+
+	public async Task<ProfileInfoDto?> GetProfileInfo(string userId)
+	{
+		var foundUser = await _userManager.FindByIdAsync(userId);
+		if (foundUser is null)
+		{
+			return null;
+		}
+
+		return new ProfileInfoDto
+		{
+			Email = foundUser.Email!,
+			NumberOfDocuments = _context.Documents.Count(document => document.UserId.Equals(userId)),
+		};
+	}
 }
 
 public class RegistrationDto
