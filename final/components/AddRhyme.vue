@@ -120,7 +120,6 @@ async function saveRhyme() {
     }
     isLoading.value = true;
     const url = 'word/addWord';
-    debugger;
     const response = await Axios.post(url, {
       word: word.value,
       syllablesPronunciation: syllablesPronunciation.value,

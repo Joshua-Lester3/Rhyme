@@ -11,7 +11,7 @@
       <v-row>
         <v-col class="my-4" cols="12" sm="6" md="6" lg="4" v-for="document in documents" :key="document.documentId">
           <v-card @click="$router.push(`/documentView?id=${document.documentId}`)" elevation="2" height="300"
-          :title="document.title" :subtitle="`Opened ${getDateString(document)}`">
+          :title="document.title" :subtitle="`Last saved ${getDateString(document)}`">
             <template v-slot:append>
               <v-icon class="mx-4" color="error" @click.stop.prevent="deleteDocument(document.documentId)">mdi-delete-outline</v-icon>
             </template>
@@ -56,7 +56,7 @@ interface Document {
   documentId: number;
   title: string;
   content: string;
-  lastOpened: string;
+  lastSaved: string;
 }
 
 const getHeight = computed(() => {
@@ -82,7 +82,7 @@ async function deleteDocument(documentId: number) {
 }
 
 function getDateString(document: Document) {
-  return new Date(Date.parse(document.lastOpened)).toLocaleDateString();
+  return new Date(Date.parse(document.lastSaved)).toLocaleDateString();
 }
 
 onMounted(async () => {
@@ -96,6 +96,19 @@ async function getDocumentList() {
       const url = `document/getDocumentList?userId=${guid}`;
       const response = await Axios.get(url);
       documents.value = response.data;
+      documents.value?.sort((a, b) => {
+        const aDate = new Date(Date.parse(a.lastSaved));
+        const bDate = new Date(Date.parse(b.lastSaved));
+        if (aDate > bDate) {
+          return -1;
+        }
+        else if (aDate < bDate) {
+          return 1;
+        }
+        else {
+          return 0;
+        }
+      });
     } catch (error) {
       console.error('Error fetching selected word:', error);
     }

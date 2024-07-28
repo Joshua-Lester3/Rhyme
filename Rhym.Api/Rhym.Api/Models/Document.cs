@@ -12,5 +12,5 @@ public class Document
 	public string UserId { get; set; } = null!;
 	public AppUser? User { get; set; }
 	public string Content { get; set; } = null!;
-	public DateTime LastOpened { get; set; }
+	public DateTime LastSaved { get; set; }
 }

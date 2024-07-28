@@ -119,15 +119,15 @@ try {
       Title: 'Untitled',
       Content: '',
       IsShared: false,
-      LastOpened: new Date().toJSON(),
+      LastSaved: new Date().toJSON(),
     });
     title.value = response.data.title;
     documentId = response.data.documentId;
   } else {
     const url = 'document/getDocumentData';
     const response = await Axios.post(url, {
+      UserId: userId.value,
       DocumentId: documentId,
-      LastOpened: new Date().toJSON(),
     });
     if (
       !response.data.isShared &&
@@ -152,6 +152,7 @@ async function saveChanges() {
       DocumentId: documentId,
       Title: title.value,
       Content: content.value,
+      LastSaved: new Date().toJSON(),
     });
   } catch (error) {
     console.error('Error posting document information', error);

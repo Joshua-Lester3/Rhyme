@@ -35,9 +35,14 @@ public class DocumentController : ControllerBase
 	}
 
 	[HttpPost("GetDocumentData")]
-	public async Task<DocumentDto?> GetDocumentAsync(DocumentDto dto)
+	public async Task<IActionResult> GetDocumentAsync(OpenDocumentDto dto)
 	{
-		return await _service.GetDocumentDataAsync(dto);
+		var result = await _service.GetDocumentDataAsync(dto);
+		if (result is null)
+		{
+			return NotFound();
+		}
+		return Ok(result);
 	}
 
 	[HttpPost("DeleteDocument")]

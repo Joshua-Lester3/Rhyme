@@ -7,5 +7,5 @@ public record DocumentDto
 	public string Title { get; set; } = null!;
 	public string Content { get; set; } = null!;
     public bool IsShared { get; set; }
-	public DateTime LastOpened { get; set; }
+	public DateTime LastSaved { get; set; }
 }

@@ -2,6 +2,7 @@
 using Rhym.Api.Data;
 using Rhym.Api.Models;
 using Rhym.Api.Requests;
+using Rhym.Api.Dtos;
 
 namespace Rhym.Api.Services;
 
@@ -49,11 +50,10 @@ public class DocumentService
 						Content = request.Content,
 						Title = request.Title,
 						Shared = request.IsShared,
-						LastOpened = request.LastOpened
+						LastSaved = request.LastSaved
 					};
 					_context.Documents.Add(addedDocument);
 					_context.SaveChanges();
-					//addedDocument.LastOpened.
 					return addedDocument;
 				}
 				else
@@ -61,6 +61,7 @@ public class DocumentService
 					foundDocument.Content = request.Content;
 					foundDocument.Title = request.Title;
 					foundDocument.Shared = request.IsShared;
+					foundDocument.LastSaved = request.LastSaved;
 					_context.SaveChanges();
 					return foundDocument;
 				}
@@ -73,20 +74,20 @@ public class DocumentService
 				foundDocument.Content = request.Content;
 				foundDocument.Title = request.Title;
 				foundDocument.Shared = request.IsShared;
+				foundDocument.LastSaved = request.LastSaved;
 				_context.SaveChanges();
 				return foundDocument;
 			}
 		}
 	}
 
-	public async Task<DocumentDto?> GetDocumentDataAsync(DocumentDto dto)
+	public async Task<DocumentDto?> GetDocumentDataAsync(OpenDocumentDto dto)
 	{
 		var document = await _context.Documents
 			.Where(document => document.DocumentId == dto.DocumentId)
 			.FirstOrDefaultAsync();
-		if (document != null)
+		if (document != null && (dto.UserId == document.UserId || document.Shared))
 		{
-			document.LastOpened = dto.LastOpened;
 			return new DocumentDto
 			{
 				UserId = document.UserId,
