@@ -8,9 +8,8 @@ const light = {
   dark: false,
   colors: {
     primary: colors.grey.lighten4,
-    secondary: colors.amber.accent3,
-    background: colors.amber.accent1,
-    surface: colors.amber.accent2,
+    secondary: colors.amber.accent2,
+    background: colors.amber.lighten4,
     accent: '#ffc107',
     warning: '#ff5722',
     error: '#e91e63',

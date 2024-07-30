@@ -6,7 +6,7 @@ public class Document
 {
 	public int DocumentId { get; set; }
 	public string Title { get; set; } = null!;
-	public bool Shared { get; set; } = false;
+	public bool IsShared { get; set; } = false;
 
 	[Required]
 	public string UserId { get; set; } = null!;

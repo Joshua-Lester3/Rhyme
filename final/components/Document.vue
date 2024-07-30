@@ -124,11 +124,8 @@ try {
     title.value = response.data.title;
     documentId = response.data.documentId;
   } else {
-    const url = 'document/getDocumentData';
-    const response = await Axios.post(url, {
-      UserId: userId.value,
-      DocumentId: documentId,
-    });
+    const url = `document/getDocumentData?userId=${userId.value}&documentId=${documentId}`;
+    const response = await Axios.get(url);
     if (
       !response.data.isShared &&
       tokenService?.value.getGuid().localeCompare(response.data.userId) != 0

@@ -17,7 +17,7 @@ public class DocumentController : ControllerBase
 	}
 
 	[HttpGet("GetDocumentList")]
-	public async Task<List<Document>> GetDocumentListAsync(string userId)
+	public async Task<List<DocumentDto>> GetDocumentListAsync(string userId)
 	{
 		return await _service.GetDocumentListAsync(userId);
 	}
@@ -34,10 +34,10 @@ public class DocumentController : ControllerBase
 		return await _service.ToggleSharedAsync(documentId, isShared);
 	}
 
-	[HttpPost("GetDocumentData")]
-	public async Task<IActionResult> GetDocumentAsync(OpenDocumentDto dto)
+	[HttpGet("GetDocumentData")]
+	public async Task<IActionResult> GetDocumentAsync(string userId, int documentId)
 	{
-		var result = await _service.GetDocumentDataAsync(dto);
+		var result = await _service.GetDocumentDataAsync(userId, documentId);
 		if (result is null)
 		{
 			return NotFound();

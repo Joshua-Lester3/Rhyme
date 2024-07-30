@@ -18,9 +18,17 @@ public class DocumentService
 		_context = context;
 	}
 
-	public async Task<List<Document>> GetDocumentListAsync(string userId)
+	public async Task<List<DocumentDto>> GetDocumentListAsync(string userId)
 	{
-		return await _context.Documents.Where(document => document.UserId == userId).ToListAsync();
+		return await _context.Documents.Where(document => document.UserId == userId).Select(document => new DocumentDto
+		{
+			UserId = document.UserId,
+			DocumentId = document.DocumentId,
+			Title = document.Title,
+			Content = document.Content.Length > 150 ? document.Content.Substring(0, 150) : document.Content,
+			IsShared = document.IsShared,
+			LastSaved = document.LastSaved,
+		}).ToListAsync();
 	}
 
 	public async Task<Document> PostDocumentAsync(DocumentDto request)
@@ -49,7 +57,7 @@ public class DocumentService
 						UserId = request.UserId,
 						Content = request.Content,
 						Title = request.Title,
-						Shared = request.IsShared,
+						IsShared = request.IsShared,
 						LastSaved = request.LastSaved
 					};
 					_context.Documents.Add(addedDocument);
@@ -60,7 +68,7 @@ public class DocumentService
 				{
 					foundDocument.Content = request.Content;
 					foundDocument.Title = request.Title;
-					foundDocument.Shared = request.IsShared;
+					foundDocument.IsShared = request.IsShared;
 					foundDocument.LastSaved = request.LastSaved;
 					_context.SaveChanges();
 					return foundDocument;
@@ -73,7 +81,7 @@ public class DocumentService
 			{
 				foundDocument.Content = request.Content;
 				foundDocument.Title = request.Title;
-				foundDocument.Shared = request.IsShared;
+				foundDocument.IsShared = request.IsShared;
 				foundDocument.LastSaved = request.LastSaved;
 				_context.SaveChanges();
 				return foundDocument;
@@ -81,12 +89,12 @@ public class DocumentService
 		}
 	}
 
-	public async Task<DocumentDto?> GetDocumentDataAsync(OpenDocumentDto dto)
+	public async Task<DocumentDto?> GetDocumentDataAsync(string userId, int documentId)
 	{
 		var document = await _context.Documents
-			.Where(document => document.DocumentId == dto.DocumentId)
+			.Where(document => document.DocumentId == documentId)
 			.FirstOrDefaultAsync();
-		if (document != null && (dto.UserId == document.UserId || document.Shared))
+		if (document != null && (userId == document.UserId || document.IsShared))
 		{
 			return new DocumentDto
 			{
@@ -94,7 +102,7 @@ public class DocumentService
 				DocumentId = document.DocumentId,
 				Title = document.Title,
 				Content = document.Content,
-				IsShared = document.Shared,
+				IsShared = document.IsShared,
 			};
 		}
 		return null;
@@ -130,7 +138,7 @@ public class DocumentService
 				foundDocument = _context.Documents.FirstOrDefault(document => document.DocumentId == documentId);
 				if (foundDocument is not null)
 				{
-					foundDocument.Shared = isShared;
+					foundDocument.IsShared = isShared;
 					_context.SaveChanges();
 				}
 				return foundDocument;

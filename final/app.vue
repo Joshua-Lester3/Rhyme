@@ -24,16 +24,16 @@
     </v-app-bar>
     <v-navigation-drawer location="right" :width="navigationDrawerWidth" v-model="drawer">
       <v-list class="text-center">
-        <v-list-item @click="$router.push('/about')">
-          <v-icon>mdi-information-slab-box-outline</v-icon> About
-        </v-list-item>
         <v-list-item @click="$router.push('/')">
           <v-icon>mdi-home</v-icon> Home
         </v-list-item>
         <v-list-item @click="$router.push('/wordList')"
-          ><v-icon> mdi-book-open-blank-variant-outline</v-icon> Rhyme
-          Editor</v-list-item
+        ><v-icon> mdi-book-open-blank-variant-outline</v-icon> Rhyme
+        Editor</v-list-item
         >
+        <v-list-item @click="$router.push('/about')">
+          <v-icon>mdi-information-slab-box-outline</v-icon> About
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-main>
