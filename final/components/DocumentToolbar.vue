@@ -35,43 +35,10 @@
 
       </v-col>
       <v-col xs="7" sm="8" md="9">
-        <v-text-field v-model="modelValue" density="compact" variant="solo" bg-color="secondary" flat />
+        <v-text-field v-model="modelValue" density="compact" variant="solo"
+          :bg-color="theme.global.name.value === 'dark' ? 'secondary' : 'grey'" flat />
       </v-col>
     </v-row>
-    <!-- <v-row class="mt-2">
-        <v-row class="justify-start mt-2 ml-3">
-          <v-btn density="compact" class="px-0">File
-              <v-menu activator="parent">
-                <v-list>
-                  <v-list-item density="compact">
-                    <v-list-item-title @click="$emit('saveChanges')">Save</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item density="compact">
-                    <v-list-item-title @click="$emit('deleteDocument')">Delete</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item density="compact">
-                    <v-list-item-title @click="$emit('showLinkDialog')">Get link</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </v-btn>
-            <v-btn density="compact" class="">Rhyme
-              <v-menu activator="parent">
-                <v-list>
-                  <v-list-item density="compact">
-                    <v-list-item-title @click="$emit('showRhymDialog')">Rhyme, kid</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item density="compact">
-                    <v-list-item-title @click="$emit('showRhymeSchemeWindow')">Show/hide rhyme scheme,
-                      kid</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </v-btn>
-
-        </v-row>
-          <v-text-field class="justify-end" v-model="modelValue" density="compact" variant="solo" bg-color="secondary" flat />
-      </v-row> -->
   </v-toolbar>
 </template>
 

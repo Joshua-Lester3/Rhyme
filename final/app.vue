@@ -1,8 +1,8 @@
 <template>
   <v-app>
     <v-app-bar
-      class="elevation-0"
-      :color="theme.global.name.value === 'dark' ? '' : 'secondary'">
+      class="elevation-2"
+      :color="theme.global.name.value === 'dark' ? '' : 'primary'">
       <template v-slot:prepend>
         <v-icon
           class="ml-5 mr-2"
@@ -22,7 +22,7 @@
 
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
     </v-app-bar>
-    <v-navigation-drawer location="right" :width="navigationDrawerWidth" v-model="drawer">
+    <v-navigation-drawer :color="theme.global.name.value === 'dark' ? '' : 'secondary'" location="right" :width="navigationDrawerWidth" v-model="drawer">
       <v-list class="text-center">
         <v-list-item @click="$router.push('/')">
           <v-icon>mdi-home</v-icon> Home

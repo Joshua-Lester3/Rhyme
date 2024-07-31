@@ -20,16 +20,17 @@
                   <v-card
                     elevation="5"
                     tile
-                    min-height="300"
+                    min-height="150"
                     height="auto"
                     min-width="300"
                     width="auto"
-                    color="primary">
+                    :color="theme.global.name.value === 'dark' ? '' : 'secondary'">
                     <v-container class="mx-0">
                       <v-textarea
                         v-model="content"
                         placeholder="Type something :)"
                         variant="solo"
+                        :bg-color="theme.global.name.value === 'dark' ? '' : 'secondary'"
                         tile
                         flat
                         density="comfortable"
@@ -85,6 +86,7 @@
 import Axios from 'axios';
 import { RhymeUtils, Word, Syllable } from '~/scripts/rhymeUtils';
 import TokenService from '~/scripts/tokenService';
+import { useTheme } from 'vuetify';
 
 const modelValue = defineModel<string>({ required: false, default: '' });
 const tokenService: Ref<TokenService> | undefined = inject('TOKEN');
@@ -97,6 +99,7 @@ let documentId: number;
 const userId = computed(() => {
   return tokenService?.value.getGuid();
 });
+const theme = useTheme();
 const isBusy = ref(false);
 const window = ref(0);
 const showRhymeSchemeWindow = ref(false);
