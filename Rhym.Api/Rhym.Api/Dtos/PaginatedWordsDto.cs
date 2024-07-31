@@ -4,4 +4,5 @@ public class PaginatedWordsDto
 {
     public required List<WordDto> Words { get; set; }
     public required int Pages { get; set; }
+    public required int TotalItems { get; set; }
 }

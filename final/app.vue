@@ -63,20 +63,6 @@ onMounted(() => {
   theme.global.name.value = defaultTheme ?? 'dark';
 });
 
-// const profileText = computed<string>(() => {
-//   signInDialog.value;
-//   console.log(tokenService?.value.isLoggedIn());
-//   if (display.value.smAndUp) {
-//     if (tokenService?.value.isLoggedIn()) {
-//       return tokenService?.value.getUserName();
-//     } else {
-//       return 'Login';
-//     }
-//   } else {
-//     return '';
-//   }
-// });
-
 function updateProfileText() {
   if (display.value.smAndUp) {
     if (tokenService?.value.isLoggedIn()) {

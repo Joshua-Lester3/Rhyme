@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Rhym.Api.Data;
 using Rhym.Api.Models;
 
@@ -6,13 +7,15 @@ namespace Rhym.Api.Identity;
 
 public class IdentitySeed
 {
-	public static async Task SeedAsync(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, AppDbContext db)
+	public static async Task SeedAsync(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, AppDbContext db, IOptions<AdminAccountOptions> adminAccountOptions)
 	{
 		// Seed Roles
 		await SeedRolesAsync(roleManager);
 
 		// Seed Admin User
-		await SeedAdminUserAsync(userManager);
+		AdminAccountOptions options = adminAccountOptions.Value;
+
+		await SeedAdminUserAsync(userManager, options);
 	}
 
 	private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
@@ -24,18 +27,18 @@ public class IdentitySeed
 		}
 	}
 
-	private static async Task SeedAdminUserAsync(UserManager<AppUser> userManager)
+	private static async Task SeedAdminUserAsync(UserManager<AppUser> userManager, AdminAccountOptions options)
 	{
 		// Seed Admin User
-		if (await userManager.FindByEmailAsync("admin@ewu.edu") == null)
+		if (await userManager.FindByEmailAsync(options.Email) == null)
 		{
 			AppUser user = new AppUser
 			{
 				UserName = "Thors",
-				Email = "admin@ewu.edu"
+				Email = options.Email,
 			};
 
-			IdentityResult result = userManager.CreateAsync(user, "P@ssw0rd123").Result;
+			IdentityResult result = userManager.CreateAsync(user, options.Password).Result;
 
 			if (result.Succeeded)
 			{

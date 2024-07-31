@@ -38,13 +38,6 @@
 </template>
 
 <script setup lang="ts">
-// get documents from database? from last open time
-// loop through them in the v-col element v-for
-//
-// have each v-card link to documentView, connecting the id of
-// each document to the documentView (somehow??), so the view knows
-// document to open
-import { useDisplay } from 'vuetify';
 import Axios from 'axios';
 import TokenService from '~/scripts/tokenService';
 import { _getAppConfig } from '#app';
@@ -59,8 +52,6 @@ bus.on(async (e) => {
 })
 
 const theme = useTheme();
-const display = useDisplay();
-const router = useRouter();
 const documents = ref<Document[]>();
 const tokenService: Ref<TokenService> | undefined = inject('TOKEN');
 const error = ref(false);
@@ -73,18 +64,6 @@ interface Document {
   content: string;
   lastSaved: string;
 }
-
-const getHeight = computed(() => {
-  if (display.sm) {
-    return 300;
-  }
-  if (display.md) {
-    return 200;
-  }
-  if (display.lg) {
-    return 300;
-  }
-});
 
 async function deleteDocument(documentId: number) {
   try {

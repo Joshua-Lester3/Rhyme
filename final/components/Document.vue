@@ -207,17 +207,4 @@ async function getRhymeScheme() {
     console.error('Error getting rhyme scheme', error);
   }
 }
-
-// function updateSize() {
-//   if (true) {
-//     documentHeight.value = 450;
-//     documentWidth.value = 330;
-//   } else if (display.sm.value) {
-//     documentHeight.value = 1000;
-//     documentWidth.value = 750;
-//   } else {
-//     documentHeight.value = 1250;
-//     documentWidth.value = 750s;
-//   }
-// }
 </script>

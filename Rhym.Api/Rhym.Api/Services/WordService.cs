@@ -169,12 +169,15 @@ public class WordService
 			.OrderBy(rhyme => rhyme.Word);
 		if (word is not null)
 		{
-			orderedWords = (IOrderedQueryable<Rhyme>) orderedWords.Where(rhyme => rhyme.Word.StartsWith(word.Trim().ToUpper()));
+			orderedWords = (IOrderedQueryable<Rhyme>) orderedWords.Where(rhyme => rhyme.Word.Contains(word.Trim().ToUpper()));
 		}
-		var words = await orderedWords
-			.Skip(pageNumber * countPerPage)
-			.Take(countPerPage)
-			.Select(rhyme => new WordDto
+		var words = orderedWords
+			.Skip(pageNumber * countPerPage);
+		if (countPerPage != -1)
+		{
+			words = words.Take(countPerPage);
+		}
+		var result = await words.Select(rhyme => new WordDto
 			{
 				Word = rhyme.Word,
 				SyllablesPronunciation = rhyme.SyllablesPronunciation,
@@ -192,12 +195,13 @@ public class WordService
 		if (numberOfRhymes % countPerPage != 0) {
 			rhymesDivided++;
 		}
-		PaginatedWordsDto result = new PaginatedWordsDto
+		PaginatedWordsDto dto = new PaginatedWordsDto
 		{
-			Words = words,
+			Words = result,
 			Pages = rhymesDivided,
+			TotalItems = numberOfRhymes,
 		};
-		return result;
+		return dto;
 	}
 
 	public async Task<Rhyme?> GetWord(string word)

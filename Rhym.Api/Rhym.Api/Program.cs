@@ -9,6 +9,13 @@ using Rhym.Api.Data;
 using Rhym.Api.Identity;
 using Rhym.Api.Models;
 using Rhym.Api.Services;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Azure.Identity;
+using Microsoft.Extensions.Options;
+using Azure.Core.Diagnostics;
+
+// Setup a listener to monitor logged events.
+using AzureEventSourceListener listener = AzureEventSourceListener.CreateConsoleLogger();
 
 var AllOrigins = "AllOrigins";
 
@@ -88,6 +95,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Secret))
 		}
 	);
+builder.Configuration
+	.AddAzureKeyVault(
+		new Uri(builder.Configuration.GetSection("KeyVaultUri").Value),
+		new DefaultAzureCredential(new DefaultAzureCredentialOptions()
+		{
+			ExcludeVisualStudioCredential = true,
+			ExcludeInteractiveBrowserCredential = true,
+			ExcludeSharedTokenCacheCredential = true,
+			ExcludeEnvironmentCredential = true,
+			ExcludeVisualStudioCodeCredential = true,
+			ExcludeAzurePowerShellCredential = true
+		}),
+		new AzureKeyVaultConfigurationOptions()
+		{
+			ReloadInterval = TimeSpan.FromMinutes(10)
+		});
+builder.Services
+	.Configure<AdminAccountOptions>(
+	builder.Configuration.GetSection("AdminAccount"));
 
 var app = builder.Build();
 
@@ -98,7 +124,7 @@ using (var scope = app.Services.CreateScope())
 	await Seeder.Seed(db);
 	await IdentitySeed.SeedAsync(scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>(),
 		scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(),
-		db);
+		db, scope.ServiceProvider.GetRequiredService<IOptions<AdminAccountOptions>>());
 }
 
 // Configure the HTTP request pipeline.
