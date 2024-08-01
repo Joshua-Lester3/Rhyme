@@ -27,7 +27,7 @@
         </tr>
       </tbody>
     </v-table>   -->
-  <div class="d-flex">
+  <div v-if="isAdmin" class="d-flex">
     <v-btn class="mt-3 mx-auto" color="secondary" @click="showAddRhyme = true">Add Rhyme</v-btn>
   </div>
   <v-card class="ma-5">
@@ -56,6 +56,7 @@
 <script setup lang="ts">
 import Axios from 'axios';
 import { useDisplay } from 'vuetify';
+import TokenService from '~/scripts/tokenService';
 
 const isLoading = ref(true);
 const countPerPage = ref(25);
@@ -73,6 +74,8 @@ const headers = [
 ];
 const totalItems = ref(0);
 const search = ref('');
+const tokenService: Ref<TokenService> | undefined = inject('TOKEN');
+const isAdmin = computed(() => tokenService?.value.isAdmin());
 
 watch([wordSearchTerm], () => {
   search.value = String(Date.now());
