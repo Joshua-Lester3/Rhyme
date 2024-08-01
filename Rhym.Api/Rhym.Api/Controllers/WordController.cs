@@ -141,6 +141,7 @@ public class WordController : ControllerBase
 	}
 
 	[HttpPost("AddWord")]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> PostWord(WordDto dto)
 	{
 		if (string.IsNullOrEmpty(dto.Word))

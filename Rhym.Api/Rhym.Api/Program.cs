@@ -14,6 +14,7 @@ using Azure.Identity;
 using Microsoft.Extensions.Options;
 using Azure.Core.Diagnostics;
 using Azure.Security.KeyVault.Secrets;
+using Azure.Core;
 
 // Setup a listener to monitor logged events.
 using AzureEventSourceListener listener = AzureEventSourceListener.CreateConsoleLogger();
@@ -100,13 +101,29 @@ builder.Configuration
 //	builder.Configuration.GetSection("Jwt"));
 JwtConfiguration jwtConfig = builder.Configuration
 	.GetSection("Jwt").Get<JwtConfiguration>() ?? throw new InvalidOperationException("JWT config not specified");
-var keyVaultName = "rhyme-vault1";
-var secretName = "JwtConfiguration--Secret";
 
-var client = new SecretClient(new Uri($"https://{keyVaultName}.vault.azure.net/"), new DefaultAzureCredential(includeInteractiveCredentials: true));
-
-KeyVaultSecret secret = await client.GetSecretAsync(secretName);
+SecretClientOptions options = new SecretClientOptions()
+{
+	Retry =
+		{
+			Delay= TimeSpan.FromSeconds(2),
+			MaxDelay = TimeSpan.FromSeconds(16),
+			MaxRetries = 5,
+			Mode = RetryMode.Exponential
+		 }
+};
+var client = new SecretClient(new Uri("https://rhyme-vault1.vault.azure.net/"), new DefaultAzureCredential(new DefaultAzureCredentialOptions()
+{
+	ExcludeVisualStudioCredential = true,
+	ExcludeInteractiveBrowserCredential = true,
+	ExcludeSharedTokenCacheCredential = true,
+	ExcludeEnvironmentCredential = true,
+	ExcludeVisualStudioCodeCredential = true,
+	ExcludeAzurePowerShellCredential = true
+}), options);
+KeyVaultSecret secret = client.GetSecret("JwtSecret");
 jwtConfig.Secret = secret.Value;
+
 builder.Services.AddSingleton(jwtConfig);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
