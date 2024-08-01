@@ -13,6 +13,7 @@ using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Microsoft.Extensions.Options;
 using Azure.Core.Diagnostics;
+using Azure.Security.KeyVault.Secrets;
 
 // Setup a listener to monitor logged events.
 using AzureEventSourceListener listener = AzureEventSourceListener.CreateConsoleLogger();
@@ -77,9 +78,35 @@ builder.Services.AddIdentityCore<AppUser>(options => options.SignIn.RequireConfi
 	.AddRoles<IdentityRole>()
 	.AddEntityFrameworkStores<AppDbContext>(); // Tell identity where to sstore things
 
+builder.Configuration
+	.AddAzureKeyVault(
+		new Uri(builder.Configuration.GetSection("KeyVaultUri").Value!),
+		new DefaultAzureCredential(new DefaultAzureCredentialOptions()
+		{
+			ExcludeVisualStudioCredential = true,
+			ExcludeInteractiveBrowserCredential = true,
+			ExcludeSharedTokenCacheCredential = true,
+			ExcludeEnvironmentCredential = true,
+			ExcludeVisualStudioCodeCredential = true,
+			ExcludeAzurePowerShellCredential = true
+		}),
+		new AzureKeyVaultConfigurationOptions()
+		{
+			ReloadInterval = TimeSpan.FromMinutes(10)
+		});
 // JWT Token Setup
+//builder.Services
+//	.Configure<JwtConfiguration>(
+//	builder.Configuration.GetSection("Jwt"));
 JwtConfiguration jwtConfig = builder.Configuration
 	.GetSection("Jwt").Get<JwtConfiguration>() ?? throw new InvalidOperationException("JWT config not specified");
+var keyVaultName = "rhyme-vault1";
+var secretName = "JwtConfiguration--Secret";
+
+var client = new SecretClient(new Uri($"https://{keyVaultName}.vault.azure.net/"), new DefaultAzureCredential(includeInteractiveCredentials: true));
+
+KeyVaultSecret secret = await client.GetSecretAsync(secretName);
+jwtConfig.Secret = secret.Value;
 builder.Services.AddSingleton(jwtConfig);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -95,22 +122,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Secret))
 		}
 	);
-builder.Configuration
-	.AddAzureKeyVault(
-		new Uri(builder.Configuration.GetSection("KeyVaultUri").Value),
-		new DefaultAzureCredential(new DefaultAzureCredentialOptions()
-		{
-			ExcludeVisualStudioCredential = true,
-			ExcludeInteractiveBrowserCredential = true,
-			ExcludeSharedTokenCacheCredential = true,
-			ExcludeEnvironmentCredential = true,
-			ExcludeVisualStudioCodeCredential = true,
-			ExcludeAzurePowerShellCredential = true
-		}),
-		new AzureKeyVaultConfigurationOptions()
-		{
-			ReloadInterval = TimeSpan.FromMinutes(10)
-		});
 builder.Services
 	.Configure<AdminAccountOptions>(
 	builder.Configuration.GetSection("AdminAccount"));
