@@ -20,14 +20,12 @@
         <v-btn density="compact" class="text-body-2">Rhyme
           <v-menu activator="parent">
             <v-list>
-              <v-list-item density="compact" @click="$emit('showRhymDialog')">
-                <v-list-item-title>Rhyme,
-                  kid</v-list-item-title>
-              </v-list-item>
+              <!-- leaving this out as it needs work -->
+              <!-- <v-list-item density="compact" @click="$emit('showRhymDialog')">
+                <v-list-item-title>Rhyme utilities</v-list-item-title>
+              </v-list-item> -->
               <v-list-item density="compact" @click="$emit('showRhymeSchemeWindow')">
-                <v-list-item-title>Show/hide rhyme
-                  scheme,
-                  kid</v-list-item-title>
+                <v-list-item-title>Color my rhyme</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>

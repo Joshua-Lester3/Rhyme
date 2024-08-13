@@ -59,7 +59,7 @@ public class TokenController : ControllerBase
 					new(JwtRegisteredClaimNames.Sub, user.UserName!),
 					new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 					new("userId", user.Id.ToString()),
-					new("userName", user.UserName), // Use the email as the username, but get rid of the email domain
+					new("userName", user.UserName!),
 				};
 
 			// Retrieve all roles associated with the user

@@ -81,7 +81,8 @@ public class WordController : ControllerBase
 		var wordsByLine = new List<List<string>>();
 		foreach (string line in lines)
 		{
-			var wordsInLine = line.Split(' ').ToList();
+			var lineWithNewLine = line.Trim() + '\n';
+			var wordsInLine = lineWithNewLine.Split(' ').ToList();
 			wordsByLine.Add(wordsInLine);
 		}
 		var pronunciations = new List<List<string[]>>();
@@ -92,8 +93,8 @@ public class WordController : ControllerBase
 			pronunciations.Add(addedLineOfPronunciations);
 			foreach (string word in lineOfWords)
 			{
-				words += word + " ";
-				var pronunciation = (await _service.GetSyllables(word));
+				words += word + ' ';
+				var pronunciation = (await _service.GetSyllables(word.Trim()));
 				addedLineOfPronunciations.Add(pronunciation);
 			}
 		}

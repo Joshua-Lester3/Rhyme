@@ -139,7 +139,11 @@ export class RhymeUtils {
     let syllablesCount = 0;
     for (let i = 0; i < words.length; i++) {
       let word = words[i];
-      let plainTextWord = poemWords[i];
+      let endsInNewLine = false;
+      if (poemWords[i].endsWith('\n')) {
+        endsInNewLine = true;
+      }
+      let plainTextWord = poemWords[i].trimEnd();
       let plainTextSyllables: string[] = [];
       try {
         let url = `word/pronunciationToPlain?word=${plainTextWord}`;
@@ -166,9 +170,11 @@ export class RhymeUtils {
         }
         wordsResult.push(new Word(syllablesInWord));
       }
+      if (endsInNewLine) {
+        wordsResult.push(new Word([new Syllable('\n', '')]));
+      }
       syllablesCount++;
     }
-
     return wordsResult;
   }
 

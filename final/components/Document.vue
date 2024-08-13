@@ -45,23 +45,26 @@
             <v-card
               elevation="5"
               tile
-              min-height="450"
+              min-height="150"
               height="auto"
-              max-width="450"
+              min-width="300"
               width="auto"
-              color="primary">
-              <v-container class="mx-0">
+              color="primary"
+              class="mt-3 pb-4">
+              <v-container class="ma-5">
                 <template
                   v-for="(word, outerIndex) in rhymeSchemeColorContent"
                   :key="outerIndex">
                   <template
                     v-for="(syllable, innerIndex) in word.syllables"
                     :key="innerIndex"
-                    ><span :class="`bg-${syllable.color}`">{{
+                    ><span v-if="syllable.syllable !== '\n'" :class="`bg-${syllable.color}`">{{
                       syllable.syllable
-                    }}</span></template
+                    }}</span>
+                    <br v-else /> 
+                    <span v-if="innerIndex === word.syllables.length - 1 && syllable.syllable !== '\n'">&ensp;</span>
+                    </template
                   >
-                  <span>&ensp;</span>
                 </template>
               </v-container>
             </v-card>
@@ -84,7 +87,7 @@
 
 <script setup lang="ts">
 import Axios from 'axios';
-import { RhymeUtils, Word, Syllable } from '~/scripts/rhymeUtils';
+import { RhymeUtils, Word } from '~/scripts/rhymeUtils';
 import TokenService from '~/scripts/tokenService';
 import { useTheme } from 'vuetify';
 
