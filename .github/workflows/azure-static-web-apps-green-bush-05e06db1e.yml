@@ -13,7 +13,7 @@ jobs:
     name: Build and Test Job
     steps:
       - name: Get code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
           lfs: false
@@ -31,7 +31,7 @@ jobs:
         run: npm run test
         working-directory: ./final
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: build-output
           path: ./final/.output/public
@@ -42,19 +42,19 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: build-output
           path: ./final/.output/public
-      - name: Build And Deploy
-        id: builddeploy
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GREEN_BUSH_05E06DB1E }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
-          action: "upload"
+      # - name: Build And Deploy
+        # id: builddeploy
+        # uses: Azure/static-web-apps-deploy@v1
+        # with:
+          # azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GREEN_BUSH_05E06DB1E }}
+          # repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          # action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "./final/.output/public" # App source code path
-          output_location: "" # Built app content directory - optional
+          # app_location: "./final/.output/public" # App source code path
+          # output_location: "" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
