@@ -43,4 +43,17 @@ public class WordServiceTests : DatabaseTestBase
 	//{
 	//	_context.Dispose();
 	//}
+
+    [TestMethod]
+    public void Test()
+    {
+        // Arrange
+        int i = 0;
+
+        // Act
+        i = i + 1;
+
+        // Assert
+        Assert.AreEqual(1, i);
+    }
 }
